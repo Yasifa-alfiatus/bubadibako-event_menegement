@@ -4,7 +4,7 @@
 $host = "localhost"; // Nama host server database
 $username ="root"; // Username untuk akses database
 $password =""; // Password untuk akses database
-$database = "event_"; // Nama database yang di gunakan
+$database = "event_management"; // Nama database yang di gunakan
 
 // Membuat koneksi ke database menggunakan mysql
 $conn = mysqli_connect($host, $username, $password, $database);
