@@ -16,7 +16,7 @@ $result = $conn->query($query);
 <body>
     <div class="container mt-5">
         <h2 class="mb-4">Daftar Event</h2>
-        <a href="add_event.php" class="btn btn-primary mb-3">Tambah Event</a>
+        <a href="proses_post.php" class="btn btn-primary mb-3">Tambah Event</a>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -24,6 +24,7 @@ $result = $conn->query($query);
                     <th>Nama Event</th>
                     <th>Tanggal</th>
                     <th>Lokasi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
