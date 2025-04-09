@@ -36,7 +36,7 @@ $result = $conn->query($query);
                     <td><?= $row['lokasi']; ?></td>
                     <td>
                         <a href="edit_post.php?id=<?= $row['event_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="delete_event.php?id=<?= $row['event_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus event ini?')">Hapus</a>
+                        <a href="hapus_post.php?id=<?= $row['event_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus event ini?')">Hapus</a>
                     </td>
                 </tr>
                 <?php endwhile; ?>
