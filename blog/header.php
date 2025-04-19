@@ -29,4 +29,4 @@
       </nav><!-- .navbar -->
     </div>
   </header><!-- End Header -->
-  <main id="main">
+  </main id="main">

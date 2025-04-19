@@ -18,26 +18,25 @@
       </a>
     </li>
     <!-- Forms & Tables -->
-    <li class="menu-header small text-uppercase"><span class="menu-header-text">Posts</span></li>
-    <!-- Forms -->
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-detail"></i>
-        <div data-i18n="Posts">Posts</div>
-      </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="posts.php" class="menu-link">
-            <div data-i18n="Basic Inputs">Post Baru</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="kategori.php" class="menu-link">
-            <div data-i18n="Input groups">Kategori</div>
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <li class="nav-item">
+    <a class="nav-link" href="posts.php">
+      <i class="bi bi-file-earmark-text"></i>
+      <span>Event</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="partisipan.php">
+      <i class="bi bi-people"></i>
+      <span>Partisipan</span>
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="pendaftaran.php">
+      <i class="bi bi-person-plus"></i>
+      <span>Pendaftaran</span>
+    </a>
+  </li>
+</ul>
 </aside>
 <!-- / Menu -->
