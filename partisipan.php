@@ -7,11 +7,7 @@ if (!$koneksi) {
 
 // Tambah data partisipan
 if (isset($_POST['tambah'])) {
-<<<<<<< HEAD
-    $partisipan_id = $_POST['partisipan_id'];
-=======
     $partisipan_id = $_POST['id_partisipan'];
->>>>>>> f5521e4277211b863c8785a77e208a173e46f83a
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     
@@ -41,20 +37,6 @@ if (isset($_GET['hapus'])) {
 <div class="container mt-5">
     <h2 class="mb-4">Data Partisipan</h2>
 
-<<<<<<< HEAD
-    <form method="post" style="margin: -280px 0;">
-    <input type="hidden" name="partisipan_id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : ''; ?>">
-    <input type="text" name="nama" placeholder="Nama Partisipan" required
-           value="<?php echo isset($edit_nama) ? $edit_nama : ''; ?>">
-    <input type="email" name="email" placeholder="Email Partisipan" required
-           value="<?php echo isset($edit_email) ? $edit_email : ''; ?>">
-
-    <?php if (isset($_GET['id'])): ?>
-        <button type="submit" name="edit">Update</button>
-    <?php else: ?>
-        <button type="submit" name="tambah">Tambah Partisipan</button>
-    <?php endif; ?>
-=======
     <!-- Form Tambah Partisipan -->
     <form method="post" class="row g-3 mb-4">
          <div class="col-md-3">
@@ -69,7 +51,6 @@ if (isset($_GET['hapus'])) {
         <div class="col-md-3">
             <button type="submit" name="tambah" class="btn btn-primary w-100">Tambah</button>
         </div>
->>>>>>> f5521e4277211b863c8785a77e208a173e46f83a
     </form>
 
     <!-- Tabel Daftar Partisipan -->
@@ -77,11 +58,7 @@ if (isset($_GET['hapus'])) {
     <table class="table table-bordered table-striped">
         <thead class="table-secondary">
             <tr>
-<<<<<<< HEAD
-                <th>id</th>
-=======
                 <th>ID</th>
->>>>>>> f5521e4277211b863c8785a77e208a173e46f83a
                 <th>Nama</th>
                 <th>Email</th>
                 <th>Aksi</th>
