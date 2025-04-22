@@ -7,6 +7,7 @@ if (!$koneksi) {
 
 // Tambah data partisipan
 if (isset($_POST['tambah'])) {
+    $partisipan_id = $_POST['partisipan_id'];
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     
@@ -45,16 +46,25 @@ if (isset($_GET['hapus'])) {
 
     <h2 style="margin: 5;">Data Partisipan</h2>
 
-    <form method="post" style="margin: -280px 0;;">
-        <input type="text" name="nama" placeholder="Nama Partisipan" required>
-        <input type="email" name="email" placeholder="Email Partisipan" required>
+    <form method="post" style="margin: -280px 0;">
+    <input type="hidden" name="partisipan_id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : ''; ?>">
+    <input type="text" name="nama" placeholder="Nama Partisipan" required
+           value="<?php echo isset($edit_nama) ? $edit_nama : ''; ?>">
+    <input type="email" name="email" placeholder="Email Partisipan" required
+           value="<?php echo isset($edit_email) ? $edit_email : ''; ?>">
+
+    <?php if (isset($_GET['id'])): ?>
+        <button type="submit" name="edit">Update</button>
+    <?php else: ?>
         <button type="submit" name="tambah">Tambah Partisipan</button>
+    <?php endif; ?>
     </form>
 
     <h2 style="margin: 0; padding: 0;">Daftar Partisipan</h2>
     <table border="2" cellpadding="8" cellspacing="0" style="margin: 0; padding: 0; position: relative; top: -260px;">
         <thead>
             <tr>
+                <th>id</th>
                 <th>Nama</th>
                 <th>Email</th>
                 <th>Aksi</th>
