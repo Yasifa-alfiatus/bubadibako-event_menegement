@@ -1,42 +1,50 @@
-<!-- Menu -->
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-  <div class="app-brand demo">
-    <a href="./dashboard.php" class="app-brand-link">
-      <span class="app-brand-text demo menu-text fw-bolder ms-2 text-uppercase">IdeKreatif</span>
-    </a>
-    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-      <i class="bx bx-chevron-left bx-sm align-middle"></i>
-    </a>
-  </div>
-  <div class="menu-inner-shadow"></div>
-  <ul class="menu-inner py-1">
-    <!-- Dashboard -->
-    <li class="menu-item">
-      <a href="dashboard.php" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-home-circle"></i>
-        <div data-i18n="Analytics">Dashboard</div>
-      </a>
-    </li>
-    <!-- Forms & Tables -->
-  <li class="nav-item">
-    <a class="nav-link" href="posts.php">
-      <i class="bi bi-file-earmark-text"></i>
-      <span>Event</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="partisipan.php">
-      <i class="bi bi-people"></i>
-      <span>Partisipan</span>
-    </a>
-  </li>
+<!-- sidemenu.php -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <li class="nav-item">
-    <a class="nav-link" href="pendaftaran.php">
-      <i class="bi bi-person-plus"></i>
-      <span>Pendaftaran</span>
-    </a>
-  </li>
-</ul>
-</aside>
-<!-- / Menu -->
+<style>
+  .sidemenu {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    background-color: #c4587c; /* pink tua */
+    color: white;
+    top: 0;
+    left: 0;
+    padding: 30px 20px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+
+  .sidemenu h4 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 20px;
+  }
+
+  .sidemenu a {
+    color: white;
+    display: block;
+    margin: 12px 0;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .sidemenu a:hover {
+    background-color: rgba(255,255,255,0.2);
+    padding-left: 20px;
+  }
+</style>
+
+<div class="sidemenu">
+  <h4>EVENT MANEGEMENT</h4>
+  <a href="dashboard.php">Dashboard</a>
+  <a href="posts.php">Event</a>
+  <a href="partisipan.php">Partisipan</a>
+  <a href="pendaftaran_event.php">Pendaftaran</a>
+  <a href="auth/logout.php" onclick="return confirm('Apakah Anda yakin ingin keluar?');" style="color:white; display:block; margin:10px 0;">Logout</a>
+</div>
