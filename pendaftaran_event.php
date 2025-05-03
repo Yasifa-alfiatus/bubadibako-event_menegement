@@ -1,144 +1,180 @@
 <?php
-include '.includes/header.php';
+session_start();
+include '.includes/sidemenu.php';
+$koneksi = mysqli_connect("localhost", "root", "", "event_management");
+if (!$koneksi) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
 
 $message = "";
+$event_id = $_SESSION['event_id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $event_id = $_POST['event_id'];
+    $_SESSION['event_id'] = $event_id;
+
     $nama = $_POST['nama'];
     $email = $_POST['email'];
-    $tanggal_pendaftaran = isset($_POST['tanggal_pendaftaran'])? 
-    $_POST['tanggal_pendaftaran']: null;
 
-    // Cek apakah email sudah ada di tabel partisipan
-    $cek = $conn->prepare("SELECT partisipan_id FROM partisipan WHERE email = ?");
-    $cek->bind_param("s", $email);
-    $cek->execute();
-    $result = $cek->get_result();
-
-    if ($result->num_rows > 0) {
-        // email sudah ada, ambil partisipan_id
-        $row = $result->fetch_assoc();
-        $partisipan_id = $row['partisipan_id'];
+    $insert_partisipan = $koneksi->prepare("INSERT INTO partisipan (nama, email) VALUES (?, ?)");
+    $insert_partisipan->bind_param("ss", $nama, $email);
+    if ($insert_partisipan->execute()) {
+        $partisipan_id = $insert_partisipan->insert_id;
     } else {
-        // email belum ada, insert ke partisipan
-        $insert_partisipan = $conn->prepare("INSERT INTO partisipan (nama, email) VALUES (?, ?)");
-        $insert_partisipan->bind_param("ss", $nama, $email);
-        if ($insert_partisipan->execute()) {
-            $partisipan_id = $insert_partisipan->insert_id;
-        } else {
-            die("Gagal insert partisipan: " . $conn->error);
-        }
+        die("Gagal insert partisipan: " . $koneksi->error);
     }
 
-    // Cek apakah sudah pernah daftar ke event ini
-    $cek_duplikat = $conn->prepare("SELECT * FROM pendaftaran WHERE event_id = ? AND partisipan_id = ?");
-    $cek_duplikat->bind_param("ii", $event_id, $partisipan_id);
-    $cek_duplikat->execute();
-    $cek_result = $cek_duplikat->get_result();
-
-    if ($cek_result->num_rows > 0) {
-        $message = "Email ini sudah terdaftar di event ini.";
+    $daftar = $koneksi->prepare("INSERT INTO pendaftaran (event_id, partisipan_id, tanggal_pendaftaran) VALUES (?, ?, NOW())");
+    $daftar->bind_param("ii", $event_id, $partisipan_id);
+    if ($daftar->execute()) {
+        $message = "Pendaftaran berhasil!";
     } else {
-        // Simpan ke tabel pendaftaran dengan tanggal dari input
-        $daftar = $conn->prepare("INSERT INTO pendaftaran (event_id, partisipan_id, tanggal_pendaftaran) 
-                                  VALUES (?, ?, ?)");
-        $daftar->bind_param("iis", $event_id, $partisipan_id, $tanggal_pendaftaran);
-        if ($daftar->execute()) {
-            $message = "Pendaftaran berhasil!";
-        } else {
-            $message = "Gagal mendaftar: " . $conn->error;
-        }
+        $message = "Gagal mendaftar: " . $koneksi->error;
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Form Pendaftaran Event</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Pendaftaran Event</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #fce4ec, #f8bbd0);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .container-box {
+      margin-top: 40px;
+      margin-left: 250px;
+      margin-right: 20px;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      max-width: calc(100% - 270px);
+    }
+
+    h2, h5 {
+      color: #d63384;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    label {
+      color: #6d214f;
+      font-weight: 500;
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      border: 1px solid #f8bbd0;
+    }
+
+    .btn-success {
+      background-color: #d63384;
+      border: none;
+    }
+
+    .btn-success:hover {
+      background-color: #c2186a;
+    }
+
+    .table thead {
+      background-color: #f8bbd0;
+    }
+
+    .table th {
+      color: #6d214f;
+    }
+
+    .alert {
+      font-size: 14px;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Form Pendaftaran Event</h4>
-        </div>
-        <div class="card-body">
-            <?php if ($message): ?>
-                <div class="alert <?= strpos($message, 'berhasil') !== false ? 'alert-success' : 'alert-danger' ?>">
-                    <?= $message ?>
-                </div>
-            <?php endif; ?>
+<div class="container-box">
+  <h2>Form Pendaftaran Event</h2>
 
-            <form method="POST">
-                <div class="mb-3">
-                    <label for="event_id" class="form-label">Pilih Event</label>
-                    <select class="form-select" name="event_id" required>
-                        <option value="">-- Pilih Event --</option>
-                        <?php
-                        $eventlist = $conn->query("SELECT * FROM events");
-                        while ($row = $eventlist->fetch_assoc()) {
-                            echo "<option value='{$row['event_id']}'>{$row['nama_event']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="nama" class="form-label">Nama</label>
-                    <input type="text" class="form-control" name="nama" required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="tanggal_pendaftaran" class="form-label">Tanggal Pendaftaran</label>
-                    <input type="date" class="form-control" name="tanggal_pendaftaran" required>
-                </div>
-                <button type="submit" class="btn btn-success">Daftar</button>
-            </form>
-
-            <?php
-            if (isset($event_id)) {
-                $list = $conn->prepare("SELECT penyewaan_id, event_id, partisipan_id, tanggal_pendaftaran 
-                                        FROM pendaftaran 
-                                        WHERE event_id = ?");
-                $list->bind_param("i", $event_id);
-                $list->execute();
-                $result = $list->get_result();
-
-                if ($result->num_rows > 0):
-            ?>
-            <hr>
-            <h5 class="mt-4">Daftar Pendaftaran untuk Event Ini</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped mt-2">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>PENYEWAAN_ID</th>
-                            <th>EVENT_ID</th>
-                            <th>PARTISIPAN_ID</th>
-                            <th>TANGGAL PENDAFTARAN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= $row['penyewaan_id'] ?></td>
-                            <td><?= $row['event_id'] ?></td>
-                            <td><?= $row['partisipan_id'] ?></td>
-                            <td><?= $row['tanggal_pendaftaran'] ?></td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
-            <?php endif; } ?>
-        </div>
+  <?php if ($message): ?>
+    <div class="alert <?= strpos($message, 'berhasil') !== false ? 'alert-success' : 'alert-danger' ?>">
+      <?= $message ?>
     </div>
+  <?php endif; ?>
+
+  <form method="POST" class="row g-3 mb-4">
+    <div class="col-md-12">
+      <label class="form-label">Pilih Event</label>
+      <select class="form-select" name="event_id" required>
+        <option value="">-- Pilih Event --</option>
+        <?php
+        $eventlist = $koneksi->query("SELECT * FROM events");
+        while ($row = $eventlist->fetch_assoc()) {
+          $selected = ($event_id == $row['event_id']) ? 'selected' : '';
+          echo "<option value='{$row['event_id']}' $selected>{$row['nama_event']}</option>";
+        }
+        ?>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <input type="text" name="nama" class="form-control" placeholder="Nama" required>
+    </div>
+    <div class="col-md-6">
+      <input type="email" name="email" class="form-control" placeholder="Email" required>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-success w-100">Daftar</button>
+    </div>
+  </form>
+
+  <?php if ($event_id): ?>
+    <?php
+    $list = $koneksi->prepare("SELECT penyewaan_id, event_id, partisipan_id, tanggal_pendaftaran 
+                               FROM pendaftaran WHERE event_id = ?");
+    $list->bind_param("i", $event_id);
+    $list->execute();
+    $result = $list->get_result();
+    ?>
+
+    <hr>
+    <h5 class="mt-4">Daftar Pendaftaran untuk Event Ini</h5>
+    <?php if ($result->num_rows > 0): ?>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped mt-2">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Event</th>
+            <th>Partisipan</th>
+            <th>Tanggal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php while ($row = $result->fetch_assoc()): ?>
+          <tr>
+            <td><?= $row['penyewaan_id'] ?></td>
+            <td><?= $row['event_id'] ?></td>
+            <td><?= $row['partisipan_id'] ?></td>
+            <td><?= $row['tanggal_pendaftaran'] ?></td>
+          </tr>
+          <?php endwhile; ?>
+        </tbody>
+      </table>
+    </div>
+    <?php else: ?>
+      <p class="text-muted text-center">Belum ada pendaftaran untuk event ini.</p>
+    <?php endif; ?>
+  <?php endif; ?>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
