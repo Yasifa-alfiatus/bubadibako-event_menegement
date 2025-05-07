@@ -33,6 +33,9 @@
     color: #d63384;
     font-size: 20px;
     font-weight: bold;
+    text-transform: uppercase;
+    display: block;
+    text-align: center;
   }
 
   a {
@@ -51,19 +54,19 @@
   .input-group-text {
     background-color: #fce4ec;
     border-color: #f8bbd0;
+    cursor: pointer;
   }
 </style>
+
+<!-- Tambah link boxicons buat icon mata -->
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <!-- Login Card -->
 <div class="card">
   <div class="card-body">
-    <!-- Logo -->
-    <div class="app-brand justify-content-center mb-4">
-      <a href="index.html" class="app-brand-link gap-2 text-decoration-none">
-        <span class="app-brand-text text-uppercase">EVENT MANAGEMENT</span>
-      </a>
+    <div class="mb-4">
+      <span class="app-brand-text">EVENT MANAGEMENT</span>
     </div>
-    <!-- /Logo -->
 
     <h4 class="mb-3 text-center">Selamat Datang Di Event Management 👋</h4>
     <form class="mb-3" action="login_auth.php" method="POST">
@@ -74,8 +77,10 @@
       <div class="mb-3 form-password-toggle">
         <label class="form-label" for="password">Password</label>
         <div class="input-group input-group-merge">
-          <input type="password" class="form-control" name="password" placeholder="••••••••••••" required />
-          <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+          <input type="password" class="form-control" name="password" id="password" placeholder="••••••••••••" required />
+          <span class="input-group-text" onclick="togglePassword()">
+            <i id="toggleIcon" class="bx bx-hide"></i>
+          </span>
         </div>
       </div>
       <button class="btn btn-primary d-grid w-100" type="submit">Masuk</button>
@@ -87,5 +92,20 @@
   </div>
 </div>
 <!-- /Login Card -->
+
+<!-- Script buat toggle password -->
+<script>
+  function togglePassword() {
+    const password = document.getElementById('password');
+    const icon = document.getElementById('toggleIcon');
+    if (password.type === "password") {
+      password.type = "text";
+      icon.classList.replace("bx-hide", "bx-show");
+    } else {
+      password.type = "password";
+      icon.classList.replace("bx-show", "bx-hide");
+    }
+  }
+</script>
 
 <?php include(".layouts/footer.php"); ?>

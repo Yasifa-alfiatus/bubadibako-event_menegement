@@ -86,7 +86,7 @@ $result = mysqli_query($koneksi, $query);
     <table class="table table-bordered table-striped">
       <thead class="table-secondary">
         <tr>
-          <th>Event ID</th>
+          <th>No</th>
           <th>Nama Event</th>
           <th>Tanggal</th>
           <th>Lokasi</th>
@@ -94,9 +94,9 @@ $result = mysqli_query($koneksi, $query);
         </tr>
       </thead>
       <tbody>
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
         <tr>
-          <td><?= $row['event_id']; ?></td>
+          <td><?= $no++; ?></td>
           <td><?= $row['nama_event']; ?></td>
           <td><?= $row['tanggal']; ?></td>
           <td><?= $row['lokasi']; ?></td>

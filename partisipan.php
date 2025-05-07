@@ -50,16 +50,15 @@ $result = mysqli_query($koneksi, $query);
     }
 
     .container-box {
-  margin-top: 40px;
-  margin-left: 250px;
-  margin-right: 20px;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  max-width: calc(100% - 270px);
-   }
-     
+      margin-top: 40px;
+      margin-left: 250px;
+      margin-right: 20px;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      max-width: calc(100% - 270px);
+    }
 
     h2 {
       color: #d63384;
@@ -120,7 +119,7 @@ $result = mysqli_query($koneksi, $query);
       <table class="table table-bordered table-striped">
         <thead class="table-secondary">
           <tr>
-            <th>ID</th>
+            <th>No</th>
             <th>Nama</th>
             <th>Email</th>
             <th>Event</th>
@@ -128,18 +127,24 @@ $result = mysqli_query($koneksi, $query);
           </tr>
         </thead>
         <tbody>
-          <?php while ($row = mysqli_fetch_assoc($result)): ?>
+          <?php if (mysqli_num_rows($result) > 0): ?>
+            <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
+              <tr>
+                <td><?= $no++ ?></td>
+                <td><?= $row['nama'] ?></td>
+                <td><?= $row['email'] ?></td>
+                <td><?= $row['nama_event'] ?? '-' ?></td>
+                <td>
+                  <a href="edit_partisipan.php?id=<?= $row['partisipan_id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                  <a href="partisipan.php?hapus=<?= $row['partisipan_id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin mau hapus?')">Hapus</a>
+                </td>
+              </tr>
+            <?php endwhile; ?>
+          <?php else: ?>
             <tr>
-              <td><?= $row['partisipan_id'] ?></td>
-              <td><?= $row['nama'] ?></td>
-              <td><?= $row['email'] ?></td>
-              <td><?= $row['nama_event'] ?? '-' ?></td>
-              <td>
-                <a href="edit_partisipan.php?id=<?= $row['partisipan_id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                <a href="partisipan.php?hapus=<?= $row['partisipan_id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin mau hapus?')">Hapus</a>
-              </td>
+              <td colspan="5" class="text-center">Event tidak tersedia.</td>
             </tr>
-          <?php endwhile; ?>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
