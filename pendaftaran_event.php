@@ -16,14 +16,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
 
-    $insert_partisipan = $koneksi->prepare("INSERT INTO partisipan (nama, email) VALUES (?, ?)");
-    $insert_partisipan->bind_param("ss", $nama, $email);
-    if ($insert_partisipan->execute()) {
-        $partisipan_id = $insert_partisipan->insert_id;
+    // Cek apakah email sudah terdaftar
+    $cek_email = $koneksi->prepare("SELECT partisipan_id FROM partisipan WHERE email = ?");
+    $cek_email->bind_param("s", $email);
+    $cek_email->execute();
+    $result = $cek_email->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $partisipan_id = $row['partisipan_id'];
     } else {
-        die("Gagal insert partisipan: " . $koneksi->error);
+        $insert_partisipan = $koneksi->prepare("INSERT INTO partisipan (nama, email) VALUES (?, ?)");
+        $insert_partisipan->bind_param("ss", $nama, $email);
+        if ($insert_partisipan->execute()) {
+            $partisipan_id = $insert_partisipan->insert_id;
+        } else {
+            die("Gagal insert partisipan: " . $koneksi->error);
+        }
     }
 
+    // Insert ke pendaftaran
     $daftar = $koneksi->prepare("INSERT INTO pendaftaran (event_id, partisipan_id, tanggal_pendaftaran) VALUES (?, ?, NOW())");
     $daftar->bind_param("ii", $event_id, $partisipan_id);
     if ($daftar->execute()) {
@@ -137,8 +149,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <?php if ($event_id): ?>
     <?php
-    $list = $koneksi->prepare("SELECT penyewaan_id, event_id, partisipan_id, tanggal_pendaftaran 
-                               FROM pendaftaran WHERE event_id = ?");
+    $list = $koneksi->prepare("
+      SELECT p.penyewaan_id, p.tanggal_pendaftaran, e.nama_event, ps.nama 
+      FROM pendaftaran p
+      JOIN events e ON p.event_id = e.event_id
+      JOIN partisipan ps ON p.partisipan_id = ps.partisipan_id
+      WHERE p.event_id = ?
+    ");
     $list->bind_param("i", $event_id);
     $list->execute();
     $result = $list->get_result();
@@ -151,18 +168,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <table class="table table-bordered table-striped mt-2">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Event</th>
-            <th>Partisipan</th>
+            <th>No</th>
+            <th>Nama Event</th>
+            <th>Nama Partisipan</th>
             <th>Tanggal</th>
           </tr>
         </thead>
         <tbody>
-          <?php while ($row = $result->fetch_assoc()): ?>
+          <?php $no = 1; while ($row = $result->fetch_assoc()): ?>
           <tr>
-            <td><?= $row['penyewaan_id'] ?></td>
-            <td><?= $row['event_id'] ?></td>
-            <td><?= $row['partisipan_id'] ?></td>
+            <td><?= $no++ ?></td>
+            <td><?= htmlspecialchars($row['nama_event']) ?></td>
+            <td><?= htmlspecialchars($row['nama']) ?></td>
             <td><?= $row['tanggal_pendaftaran'] ?></td>
           </tr>
           <?php endwhile; ?>
